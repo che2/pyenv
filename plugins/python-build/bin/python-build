@@ -301,7 +301,8 @@ http_head_curl() {
 }
 
 http_get_curl() {
-  curl -q -o "${2:--}" -sSLf "$1"
+  # use -k to ignore self-signed certs
+  curl -k -q -o "${2:--}" -sSLf "$1"
 }
 
 http_head_wget() {
@@ -1499,13 +1500,20 @@ build_package_get_pip() {
 }
 
 build_package_ensurepip() {
-  local ensurepip_opts
-  if [[ "$PYTHON_MAKE_INSTALL_TARGET" != *"altinstall"* ]]; then
-    ensurepip_opts="--altinstall"
-  fi
-  "$PYTHON_BIN" -m ensurepip $ensurepip_opts 1>/dev/null 2>&1 || {
-    build_package_ez_setup "$@" && build_package_get_pip "$@"
-  } || return 1
+    # I could not find a way to ignore selfsigned certs when installing
+    # pip. Installing the certificate into the system certificate store does
+    # not seem to help.
+
+    # Work around: run `python -m ensurepip` after installation
+
+    # local ensurepip_opts
+    # if [[ "$PYTHON_MAKE_INSTALL_TARGET" != *"altinstall"* ]]; then
+    #   ensurepip_opts="--altinstall"
+    # fi
+    # "$PYTHON_BIN" -m ensurepip $ensurepip_opts 1>/dev/null 2>&1 || {
+    #   build_package_ez_setup "$@" && build_package_get_pip "$@"
+    # } || return 1
+    return 0
 }
 
 version() {
