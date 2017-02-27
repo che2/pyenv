@@ -325,8 +325,8 @@ http() {
 
   if type aria2c &>/dev/null; then
     "http_${method}_aria2c" "$url" "$file"
-  elif type curl &>/dev/null; then
-    "http_${method}_curl" "$url" "$file"
+  # elif type curl &>/dev/null; then
+  #   "http_${method}_curl" "$url" "$file"
   elif type wget &>/dev/null; then
     "http_${method}_wget" "$url" "$file"
   else
@@ -357,11 +357,11 @@ http_get_curl() {
 }
 
 http_head_wget() {
-  wget -q --spider ${WGET_OPTS} "$1" >&4 2>&1
+  wget -q --spider ${WGET_OPTS} "$1" >&4 2>&1 --no-check-certificate
 }
 
 http_get_wget() {
-  wget -nv ${WGET_OPTS} -O "${2:--}" "$1"
+  wget -nv ${WGET_OPTS} -O "${2:--}" "$1" --no-check-certificate
 }
 
 fetch_tarball() {
